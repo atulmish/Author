@@ -23,6 +23,7 @@ catch (Exception ex)
 }
 finally
 {
+    Console.WriteLine("Press any key to exit.");
     Log.CloseAndFlush();
     Console.ReadKey();
 }
