@@ -1,5 +1,6 @@
 ﻿using Serilog;
 using Spire.Doc;
+using System.Collections.Concurrent;
 using TemplateCreator.Services.Config;
 using TemplateCreator.Services.Csv;
 
@@ -11,21 +12,35 @@ namespace TemplateCreator.Services.Output
         {
             Log.Information("Generating files.....");
 
+            var filesGenerated = new ConcurrentQueue<CsvLine>();
             Parallel.ForEach(csvLines, csvLine =>
             {
-                var outputFile = GetFileName(csvLine.Fields, Path.Combine(config.OutputFilesPath, config.OutputFileName));
-
-                var document = new Document(config.DocFileTemplatePath);
-
-                var replaced = 0;
-                foreach (var field in csvLine.Fields)
-                    replaced += document.Replace(field.Keyword, field.FieldValue, false, true);
-
-                Log.Information($"Generating file {outputFile}");
-                document.SaveToFile(outputFile);
+                try
+                {
+                    GenerateFile(config, csvLine);
+                    filesGenerated.Enqueue(csvLine);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, $"Failed to generate file");
+                }
             });
 
-            Log.Information($"{csvLines.Count()} file generated.");
+            Log.Information($"{filesGenerated.Count()} file generated.");
+        }
+
+        private static void GenerateFile(Configuration config, CsvLine csvLine) 
+        {
+            var outputFile = GetFileName(csvLine.Fields, Path.Combine(config.OutputFilesPath, config.OutputFileName));
+
+            var document = new Document(config.DocFileTemplatePath);
+
+            var replaced = 0;
+            foreach (var field in csvLine.Fields)
+                replaced += document.Replace(field.Keyword, field.FieldValue, false, true);
+
+            Log.Information($"Generating file {outputFile}");
+            document.SaveToFile(outputFile);
         }
 
         private static string GetFileName(List<CSVField> fields, string outputFilePath)

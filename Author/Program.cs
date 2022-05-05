@@ -1,11 +1,12 @@
 ﻿using Serilog;
+using Serilog.Sinks.SystemConsole.Themes;
 using TemplateCreator.Services.Config;
 using TemplateCreator.Services.Csv;
 using TemplateCreator.Services.Output;
 
 Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Information()
-                .WriteTo.Console()
+                .WriteTo.Console(theme: AnsiConsoleTheme.Literate)
                 .WriteTo.File("Logs/log.txt", rollingInterval: RollingInterval.Day, retainedFileCountLimit:5)
                 .CreateLogger();
 
