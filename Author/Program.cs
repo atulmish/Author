@@ -11,15 +11,15 @@ Log.Logger = new LoggerConfiguration()
 
 try
 {
-    Log.Information("Authoring Started");
+    Log.Information("Authoring started");
     var config = ConfigService.ReadConfig();
     var csvLines = CsvReader.ReadFile(config);
     OutputService.GenerateFiles(config, csvLines);
-    Log.Information("Author exited with errors");
+    Log.Information("Authoring completed");
 }
 catch (Exception ex)
 {
-    Log.Error(ex, "Something went wrong while running the application");
+    Log.Error(ex, "Authoring Failed");
 }
 finally
 {
