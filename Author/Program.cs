@@ -4,9 +4,9 @@ using TemplateCreator.Services.Csv;
 using TemplateCreator.Services.Output;
 
 Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
+                .MinimumLevel.Information()
                 .WriteTo.Console()
-                .WriteTo.File("Logs/log.txt", rollingInterval: RollingInterval.Day)
+                .WriteTo.File("Logs/log.txt", rollingInterval: RollingInterval.Day, retainedFileCountLimit:5)
                 .CreateLogger();
 
 try

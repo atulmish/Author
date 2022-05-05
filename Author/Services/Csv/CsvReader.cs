@@ -5,7 +5,7 @@ namespace TemplateCreator.Services.Csv
 {
     public class CsvReader
     {
-        public static IEnumerable<CsvLine> ReadFile(Configuration config) 
+        public static IEnumerable<CsvLine> ReadFile(Configuration config)
         {
             try
             {
@@ -15,8 +15,20 @@ namespace TemplateCreator.Services.Csv
 
                 var result = new List<CsvLine>();
 
-                var headers = reader.ReadLine().Split(config.CsvDelimiter);
+                Log.Information($"Reading headers");
+                var headers = reader.ReadLine()
+                    .Split(config.CsvDelimiter)
+                    .Select(x => x.Trim())
+                    .ToList();
 
+                foreach (var line in headers)
+                    Log.Information(line);
+
+                Log.Information($"\nBELOW KEYWORDS WOULD BE REPLACE FROM THE TEMPLATE");
+                foreach (var line in headers.Where(x => !string.IsNullOrWhiteSpace(x)))
+                    Log.Information(line.ToKeyword());
+
+                Log.Information("Reading data.");
                 while (!reader.EndOfStream)
                 {
                     var csvLine = new CsvLine();
@@ -30,16 +42,20 @@ namespace TemplateCreator.Services.Csv
 
                     for (int i = 0; i < headers.Count(); i++)
                     {
-                        var keyword = $"{{{headers[i].Trim()}}}";
-                        csvLine.Fields.Add(new CSVField { FieldName = headers[i].Trim(), FieldValue = values[i].Trim(), Keyword = keyword });
+                        if (string.IsNullOrWhiteSpace(headers[i]))
+                            continue;
+
+                        csvLine.Fields.Add(new CSVField { FieldName = headers[i], FieldValue = values[i].Trim(), Keyword = headers[i].ToKeyword() });
                     }
 
                     result.Add(csvLine);
                 }
 
+                Log.Information($"Total lines of data {result.Count}");
+
                 return result;
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 Log.Error(ex, $"Failed to read CSV file {config.DataFilePath}");
                 throw;
@@ -47,7 +63,7 @@ namespace TemplateCreator.Services.Csv
         }
     }
 
-    public class CsvLine 
+    public class CsvLine
     {
         public List<CSVField> Fields { get; set; } = new List<CSVField> { };
     }
@@ -57,5 +73,13 @@ namespace TemplateCreator.Services.Csv
         public string FieldName { get; set; }
         public string FieldValue { get; set; }
         public string Keyword { get; set; }
+    }
+
+    public static class StringToKeyword
+    {
+        public static string ToKeyword(this string input) 
+        {
+            return $"{{{input.Trim()}}}";
+        }
     }
 }
