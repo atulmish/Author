@@ -24,6 +24,8 @@ namespace TemplateCreator.Services.Config
                 Log.Information($"Validating {configPath}.");
                 config.Validate();
 
+                config.SetDefaults();
+
                 return config;
             }
             catch(Exception ex)
@@ -34,30 +36,43 @@ namespace TemplateCreator.Services.Config
         }
     }
 
-    public class Configuration 
+    public record Configuration
     {
-        public string DocFileTemplatePath { get; set; }
-        public string DataFilePath { get; set; }
-        public string OutputFilesPath { get; set; }
-        public string OutputFileName { get; set; }
-        public string CsvDelimiter { get; set; }
+        public Source Source { get; set; } = new Source();
+        public Output Output { get; set; } = new Output();
 
         public void Validate() 
         {
-            if (!File.Exists(DocFileTemplatePath))
-                throw new InvalidOperationException("Template word file does not exists.");
+            if (!File.Exists(Source.TemplateFile))
+                throw new InvalidOperationException("The source template file doesn't exist.");
 
-            if (!File.Exists(DataFilePath))
-                throw new InvalidOperationException("Data csv file does not exists.");
-
-            if (!Directory.Exists(OutputFilesPath))
-                Directory.CreateDirectory(OutputFilesPath);
-
-            if (string.IsNullOrWhiteSpace(OutputFileName))
-                throw new InvalidOperationException("Output file name is required.");
-
-            if (string.IsNullOrWhiteSpace(CsvDelimiter))
-                throw new InvalidOperationException("CsvDelimiter is required.");
+            if (!File.Exists(Source.DataFile))
+                throw new InvalidOperationException("The source data file doesn't exist.");
         }
+
+        public void SetDefaults()
+        {
+            if (string.IsNullOrWhiteSpace(Output.Directory))
+                Output.Directory = Path.Combine(Environment.CurrentDirectory, "Output");
+
+            if (string.IsNullOrWhiteSpace(Output.Filename))
+                Output.Filename = "[id]-[timestamp]";
+
+            if (string.IsNullOrWhiteSpace(Output.Format))
+                Output.Format = "DOCX";
+        }
+    }
+
+    public record Output
+    {
+        public string? Directory { get; set; }
+        public string? Filename { get; set; }
+        public string? Format { get; set; }
+    }
+
+    public record Source
+    {
+        public string? DataFile { get; set; }
+        public string? TemplateFile { get; set; }
     }
 }

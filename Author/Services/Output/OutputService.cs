@@ -1,19 +1,19 @@
-﻿using Serilog;
-using Spire.Doc;
+﻿using NPOI.OpenXml4Net.OPC;
+using NPOI.XWPF.UserModel;
+using Serilog;
 using System.Collections.Concurrent;
-using TemplateCreator.Services.Config;
 using TemplateCreator.Services.Csv;
 
 namespace TemplateCreator.Services.Output
 {
     public class OutputService
     {
-        public static void GenerateFiles(Configuration config, IEnumerable<CsvLine> csvLines) 
+        public static void GenerateFiles(Config.Configuration config, IEnumerable<CsvLine> csvLines) 
         {
             Log.Information("Generating files.....");
 
             var filesGenerated = new ConcurrentQueue<CsvLine>();
-            Parallel.ForEach(csvLines, csvLine =>
+            Parallel.ForEach(csvLines, new ParallelOptions { MaxDegreeOfParallelism = 1 }, csvLine =>
             {
                 try
                 {
@@ -26,21 +26,26 @@ namespace TemplateCreator.Services.Output
                 }
             });
 
-            Log.Information($"{filesGenerated.Count()} file generated.");
+            Log.Information($"{filesGenerated.Count()}/{csvLines.Count()} file generated.");
         }
 
-        private static void GenerateFile(Configuration config, CsvLine csvLine) 
+        private static void GenerateFile(Config.Configuration config, CsvLine csvLine) 
         {
-            var outputFile = GetFileName(csvLine.Fields, Path.Combine(config.OutputFilesPath, config.OutputFileName));
+            var doc = new XWPFDocument(OPCPackage.Open(config.Source.TemplateFile));
 
-            var document = new Document(config.DocFileTemplatePath);
+            ReplaceTextinParagraph(doc.Paragraphs, csvLine.Fields);
 
-            var replaced = 0;
-            foreach (var field in csvLine.Fields)
-                replaced += document.Replace(field.Keyword, field.FieldValue, false, true);
+            foreach (XWPFTable tbl in doc.Tables)
+                foreach (XWPFTableRow row in tbl.Rows)
+                    foreach (XWPFTableCell cell in row.GetTableCells())
+                        ReplaceTextinParagraph(cell.Paragraphs, csvLine.Fields);
 
-            Log.Information($"Generating file {outputFile}");
-            document.SaveToFile(outputFile);
+            var fileName = GetFileName(csvLine.Fields, config.Output.Filename) + "." + config.Output.Format.ToLower();
+            var filePath = Path.Combine(config.Output.Directory, fileName);
+
+            doc.Write(new FileStream(filePath, FileMode.Create, FileAccess.Write));
+
+            Log.Information($"File generated {filePath}");
         }
 
         private static string GetFileName(List<CSVField> fields, string outputFilePath)
@@ -49,10 +54,18 @@ namespace TemplateCreator.Services.Output
             {
                 outputFilePath = outputFilePath
                     .Replace(field.Keyword, field.FieldValue)
-                    .Replace("[timestamp]", DateTime.Now.ToString("yyyy-MM-dd-hh-mm-ss-fff"));
+                    .Replace("[timestamp]", DateTime.UtcNow.ToString("yyyyMMddHHmmssffffff"))
+                    .Replace("[id]", DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()); ;
             }
 
             return outputFilePath;
+        }
+
+        private static void ReplaceTextinParagraph(IList<XWPFParagraph> paragraphs, List<CSVField> fields) 
+        {
+            foreach (XWPFParagraph p in paragraphs)
+                foreach (var field in fields)
+                    p.ReplaceText(field.Keyword, field.FieldValue);
         }
     }
 }

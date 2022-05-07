@@ -1,15 +1,18 @@
-﻿# Template File (MS Word File) Location 
-DocFileTemplatePath: .\template.doc
+﻿Source:
+  
+  # The source data file full path. The currently suported formats are csv and excel.
+  DataFile: .\sample.csv
+  
+  # The source template file. The currently supported formats are word file .doc and .docs
+  TemplateFile: .\template1.docx
 
-# The CSV Data file which will be used to generate word files
-DataFilePath: .\sample.csv
-
-# The location of output directory. A new directory will be created if it doesn't exist.'
-OutputFilesPath: .\Output
-
-# The output filename 
-OutputFileName: "{First Name}_[timestamp].doc"
-
-# The CSV file delimiter 
-CsvDelimiter: ","
-
+Output:
+  
+  # The output directory. If the directory is not provided a directory will be created.
+  Directory: 
+  
+  # The file name of the output. 
+  Filename: "{First Name} {Last Name}"
+  
+  # The output file format. Supported format are DOCX and PDF
+  Format: DOCX

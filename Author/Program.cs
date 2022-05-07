@@ -14,7 +14,7 @@ try
 {
     Log.Information("Authoring started");
     var config = ConfigService.ReadConfig();
-    var csvLines = CsvReader.ReadFile(config);
+    var csvLines = FileReader.ReadFile(config.Source.DataFile);
     OutputService.GenerateFiles(config, csvLines);
     Log.Information("Authoring completed");
 }
