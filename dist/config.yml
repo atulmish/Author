@@ -11,7 +11,7 @@ Output:
   # The output directory. If the directory is not provided a directory will be created.
   Directory: 
   
-  # The file name of the output. 
+  # The file name of the output.
   Filename: "[id] {First Name} {Last Name}"
   
   # The output file format.

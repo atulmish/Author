@@ -54,8 +54,7 @@ namespace TemplateCreator.Services.Output
             {
                 outputFilePath = outputFilePath
                     .Replace(field.Keyword, field.FieldValue)
-                    .Replace("[timestamp]", DateTime.UtcNow.ToString("yyyyMMddHHmmssffffff"))
-                    .Replace("[id]", DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()); ;
+                    .Replace("[id]", NUlid.Ulid.NewUlid().ToString()); ;
             }
 
             return outputFilePath;
