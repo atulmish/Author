@@ -1,7 +1,16 @@
-# About
+# Authur 
+[![MIT License1](https://img.shields.io/pypi/l/ansicolortags.svg)](https://github.com/atulmish/Author/blob/main/LICENSE)
 The **Author** is a tool to generate multiple documents from a source data file.  
 
-# Sample config
+# Installation Guide
+
+ - Clone or download the source code
+ - Navigate to the dist directory
+ - The dist directory contains the Author.exe
+ - Setup the config.yml file as per your need
+ - Run Author.exe
+
+# Sample config.yml
 ```
 Source:
   
