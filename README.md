@@ -1,5 +1,7 @@
 # Authur 
 [![MIT License1](https://img.shields.io/pypi/l/ansicolortags.svg)](https://github.com/atulmish/Author/blob/main/LICENSE)
+
+# About
 The **Author** is a tool to generate multiple documents from a source data file.  
 
 # Installation Guide
