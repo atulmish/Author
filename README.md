@@ -1,4 +1,4 @@
-# Authur 
+# Author 
 [![MIT License1](https://img.shields.io/pypi/l/ansicolortags.svg)](https://github.com/atulmish/Author/blob/main/LICENSE)
 
 # About
