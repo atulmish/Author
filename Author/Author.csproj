@@ -30,7 +30,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DemoFiles\" />
+    <None Update="SampleData\data.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="SampleData\template.docx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

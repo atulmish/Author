@@ -6,10 +6,10 @@ The **Author** is a tool to generate multiple documents from a source data file.
 Source:
   
   # The source data file full path. The currently suported formats are csv and excel.
-  DataFile: .\sample.csv
+  DataFile: .\SampleData\data.csv
   
   # The source template file. The currently supported formats are word file .doc and .docs
-  TemplateFile: .\template1.docx
+  TemplateFile: .\SampleData\template.docx
 
 Output:
   
@@ -17,9 +17,8 @@ Output:
   Directory: 
   
   # The file name of the output. 
-  Filename: "{First Name} {Last Name}"
+  Filename: "[id] {First Name} {Last Name}"
   
-  # The output file format. Supported format are DOCX and PDF
+  # The output file format.
   Format: DOCX
-
 ```

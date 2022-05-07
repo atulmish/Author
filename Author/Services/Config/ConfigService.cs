@@ -53,7 +53,11 @@ namespace TemplateCreator.Services.Config
         public void SetDefaults()
         {
             if (string.IsNullOrWhiteSpace(Output.Directory))
+            {
                 Output.Directory = Path.Combine(Environment.CurrentDirectory, "Output");
+                if(!Directory.Exists("Output.Directory"))
+                    Directory.CreateDirectory(Output.Directory);
+            }
 
             if (string.IsNullOrWhiteSpace(Output.Filename))
                 Output.Filename = "[id]-[timestamp]";
