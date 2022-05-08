@@ -350,5 +350,4 @@ MigrationBackup/
 .ionide/
 
 # Output files and log files
-dist/Output/
-dist/Logs/
+.dist/*

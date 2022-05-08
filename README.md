@@ -6,9 +6,8 @@ The **Author** is a tool to generate multiple documents from a source data file.
 
 # Installation Guide
 
- - Clone or download the source code
- - Navigate to the dist directory
- - The dist directory contains the Author.exe
+ - Download the package and open the directory
+ - The directory contains the Author.exe
  - Setup the config.yml file as per your need
  - Run Author.exe
 

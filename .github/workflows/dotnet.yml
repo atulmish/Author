@@ -23,3 +23,11 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    - name: Publish
+      run: dotnet publish -c Release -o ./dist --no-restore
+    - uses: actions/upload-artifact@v3
+      with:
+        name: Author
+        path: |
+            ./dist
+            !./dist/*.pdb
