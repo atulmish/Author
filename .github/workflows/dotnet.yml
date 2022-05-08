@@ -30,18 +30,17 @@ jobs:
     - name: Publish
       run: dotnet publish -c Release -o ./dist --no-restore
 
-    - name: Create Artefacts
+    - name: Release
     - uses: actions/upload-artifact@v3
       with:
         name: Author
         path: |
             ./dist
             !./dist/*.pdb
-
-    - name: release
     - uses: ncipollo/release-action@v1
       with:
         name: "${{ github.ref }}"
         artifacts: "./dist/"
         bodyFile: "README.md"
         token: ${{ secrets.GITHUB_TOKEN }}
+
