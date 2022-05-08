@@ -18,12 +18,16 @@ jobs:
         dotnet-version: 6.0.x
     - name: Restore dependencies
       run: dotnet restore
+    
     - name: Build
       run: dotnet build --no-restore
+    
     - name: Test
       run: dotnet test --no-build --verbosity normal
+      
     - name: Publish
       run: dotnet publish -c Release -o ./dist --no-restore
+  
     - name: Create Artefacts
     - uses: actions/upload-artifact@v3
       with:
@@ -31,10 +35,12 @@ jobs:
         path: |
             ./dist
             !./dist/*.pdb
+    
     - name: Release
-    - uses: ncipollo/release-action@v1
+    - uses: "marvinpinto/action-automatic-releases@latest"
       with:
-        name: "${{ github.ref }}"
-        artifacts: "./dist/"
-        bodyFile: "README.md"
-        token: ${{ secrets.GITHUB_TOKEN }}
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        prerelease: false
+        files: |
+            LICENSE.txt
+            *.jar
